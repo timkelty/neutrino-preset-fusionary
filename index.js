@@ -23,6 +23,7 @@ module.exports = (neutrino) => {
   neutrino.use(eslint);
 
   neutrino.use(extractStyles, {
+    filename: '[name].[chunkhash].bundle.css',
     use: [
       'style-loader',
       {
@@ -56,10 +57,7 @@ module.exports = (neutrino) => {
   neutrino.config.module
   .rule('svg')
   .use('img')
-    .loader('img-loader')
-    .end()
-  .use('url')
-    .loader('svg-url-loader');
+    .loader('img-loader');
 
   neutrino.config.plugins
   // .delete('html')
@@ -68,8 +66,5 @@ module.exports = (neutrino) => {
   neutrino.config
   .plugin('manifest')
     .use(ManifestPlugin)
-    .end()
-  .plugin('extract')
-    .use(ExtractTextPlugin, ['[name].[chunkhash].bundle.css'])
     .end();
 };
