@@ -5,6 +5,7 @@ const eslint = require('neutrino-middleware-eslint');
 const extractStyles = require('neutrino-middleware-extractstyles');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const SvgSpritePlugin = require('webpack-svg-sprite-plugin')
 
 module.exports = (neutrino) => {
   const postcssConfig = {
@@ -52,29 +53,28 @@ module.exports = (neutrino) => {
     ]
   });
 
-  // neutrino.config.module
-  // .rule('lint')
-  //   .pre()
-  //   .test(/\.jsx?$/)
-  //   .include
-  //     .add(neutrino.options.source)
-  //     .end()
-  //   .use('standard')
-  //     .loader(require.resolve('standard-loader'))
-  //     .options({ snazzy: false });
-  //
-  //
   neutrino.config.module
-    .rule('img')
+  .rule('img')
     .use('img')
-      .loader('img-loader')
-  ;
+    .loader('img-loader')
+    .end();
+
+  neutrino.config.module
+  .rule('svg')
+    .use('img')
+    .loader('img-loader')
+    .end();
 
   neutrino.config.plugins
   // .delete('html')
   .delete('copy');
 
   neutrino.config
+  // .plugin('svgSprite')
+  //   .use(SvgSpritePlugin, {
+  //      filename: 'my-sprite.svg',
+  //   })
+  //   .end()
   .plugin('manifest')
     .use(ManifestPlugin)
     .end()
