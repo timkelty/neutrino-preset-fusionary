@@ -4,6 +4,7 @@ const eslint = require('neutrino-middleware-eslint');
 const extractStyles = require('neutrino-middleware-extractstyles');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const SvgStorePlugin = require('webpack-svgstore-plugin');
 
 module.exports = (neutrino) => {
   const postcssConfig = {
@@ -44,14 +45,12 @@ module.exports = (neutrino) => {
     ]
   });
 
-  // neutrino.config.module.rules.delete('svg');
-  // neutrino.config.module
+  neutrino.config.module
   // .rule('svg')
-  // .test(/\.svg(\?v=\d+\.\d+\.\d+)?$/)
-  // .use('svg-sprite')
-  // .loader('svg-sprite-loader', {
-  //   extract: true
-  // });
+  //   .use('svg-sprite')
+  //   .loader('svg-sprite-loader', {
+  //     extract: true
+  //   });
 
   neutrino.config.module
   .rule('img')
