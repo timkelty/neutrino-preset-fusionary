@@ -22,6 +22,10 @@ module.exports = (neutrino) => {
   neutrino.use(stylelint);
   neutrino.use(eslint);
 
+  /**
+   * 1. https://github.com/postcss/postcss-loader#css-modules
+   */
+
   neutrino.use(extractStyles, {
     filename: '[name].[chunkhash].bundle.css',
     use: [
@@ -30,7 +34,7 @@ module.exports = (neutrino) => {
         loader: 'css-loader',
         options: {
           sourceMap: true,
-          importLoaders: 1,
+          importLoaders: 1, /* 1 */
         }
       },
       {
