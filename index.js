@@ -39,11 +39,6 @@ module.exports = (neutrino) => {
     ]
   });
 
-  neutrino.config.module
-  .rule('style')
-  // .enforce('pre')
-  ;
-
   // neutrino.config.module.rules.delete('svg');
   // neutrino.config.module
   // .rule('svg')
@@ -76,12 +71,5 @@ module.exports = (neutrino) => {
     .end()
   .plugin('extract')
     .use(ExtractTextPlugin, ['[name].[chunkhash].bundle.css'])
-    .end()
-  // .plugin('copy')
-  //   .tap((args) => {
-  //     args.options = {
-  //       ignore: ['*.js*', '*.css']
-  //     }
-  //   })
     .end();
 };
