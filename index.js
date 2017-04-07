@@ -12,6 +12,7 @@ module.exports = (neutrino) => {
       require('postcss-assets')({
         loadPaths: ['fonts/', 'img/'],
         basePath: neutrino.options.source,
+        relative: true,
       }),
       require('postcss-cssnext')(),
     ]
@@ -39,18 +40,31 @@ module.exports = (neutrino) => {
   });
 
   neutrino.config.module
-    .rule('img')
-    .use('img')
+  .rule('style')
+  // .enforce('pre')
+  ;
+
+  // neutrino.config.module.rules.delete('svg');
+  // neutrino.config.module
+  // .rule('svg')
+  // .test(/\.svg(\?v=\d+\.\d+\.\d+)?$/)
+  // .use('svg-sprite')
+  // .loader('svg-sprite-loader', {
+  //   extract: true
+  // });
+
+  neutrino.config.module
+  .rule('img')
+  .use('img')
     .loader('img-loader');
 
-  neutrino.config.module.rules.delete('svg');
   neutrino.config.module
-    .rule('svg')
-    .test(/\.svg(\?v=\d+\.\d+\.\d+)?$/)
-    .use('svg-sprite')
-    .loader('svg-sprite-loader', {
-      extract: true
-    });
+  .rule('svg')
+  .use('img')
+    .loader('img-loader')
+    .end()
+  .use('url')
+    .loader('svg-url-loader');
 
   neutrino.config.plugins
   // .delete('html')
