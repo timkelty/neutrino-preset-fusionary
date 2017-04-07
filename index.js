@@ -53,14 +53,14 @@ module.exports = (neutrino) => {
 
   neutrino.config.module
   .rule('svg')
+  .use('img')
+    .loader('img-loader')
+    .end()
   .use('externalSvgSprite')
     .loader(svgSpriteLoader)
     .options({
       name: 'sprite.[hash].bundle.svg'
-    })
-    .end()
-  .use('img')
-    .loader('img-loader');
+    });
 
   neutrino.config.plugins
   // .delete('html')
