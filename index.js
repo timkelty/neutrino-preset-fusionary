@@ -6,6 +6,8 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const svgSpriteLoader = require.resolve('external-svg-sprite-loader');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
+const ModernizrWebpackPlugin = require('modernizr-webpack-plugin');
+const path = require('path');
 
 module.exports = (neutrino) => {
   const postcssConfig = {
@@ -46,9 +48,17 @@ module.exports = (neutrino) => {
   });
 
   /**
-   * Module Rules
+   * Module
    * 1. https://github.com/karify/external-svg-sprite-loader/issues/18
    */
+
+  neutrino.config.module
+  .rule('modernizr')
+  .test(/\.modernizr-autorc$/)
+  .use('modernizr')
+  .loader('modernizr-auto-loader')
+  .end();
+
   neutrino.config.module
   .rule('img')
   .use('img')
@@ -68,6 +78,12 @@ module.exports = (neutrino) => {
     })
   .end();
 
+  /**
+   * Alias
+   */
+
+  neutrino.config.resolve.alias
+  .set('modernizr$', path.resolve(neutrino.options.root, '.modernizr-autorc'))
 
   /**
    * Webpack Plugins
