@@ -4,9 +4,7 @@ const eslint = require('neutrino-middleware-eslint');
 const extractStyles = require('neutrino-middleware-extractstyles');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const svgSpriteLoader = require.resolve('external-svg-sprite-loader');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
-const ModernizrWebpackPlugin = require('modernizr-webpack-plugin');
 const path = require('path');
 
 module.exports = (neutrino) => {
@@ -72,7 +70,7 @@ module.exports = (neutrino) => {
     .loader('img-loader')
   .end()
   .use('externalSvgSprite')
-    .loader(svgSpriteLoader)
+    .loader(require.resolve('external-svg-sprite-loader'))
     .options({
       name: 'sprite.[hash].bundle.svg'
     })
