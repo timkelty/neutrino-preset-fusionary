@@ -20,18 +20,17 @@ module.exports = (neutrino) => {
     ]
   };
 
-  neutrino.use(web);
-  neutrino.use(stylelint);
-  neutrino.use(eslint);
 
   /**
+   * Neutrino middlewares
    * 1. https://github.com/postcss/postcss-loader#css-modules
    */
 
+  neutrino.use(web);
+  neutrino.use(stylelint);
+  neutrino.use(eslint);
   neutrino.use(extractStyles, {
-    filename: '[name].[chunkhash].bundle.css',
     use: [
-      'style-loader',
       {
         loader: 'css-loader',
         options: {
@@ -43,34 +42,55 @@ module.exports = (neutrino) => {
         loader: 'postcss-loader',
         options: postcssConfig,
       },
-    ]
+    ],
   });
 
+  /**
+   * Module Rules
+   * 1. https://github.com/karify/external-svg-sprite-loader/issues/18
+   */
   neutrino.config.module
   .rule('img')
   .use('img')
-    .loader('img-loader');
+  .loader('img-loader')
+  .end();
 
   neutrino.config.module
   .rule('svg')
+  .uses.delete('url').end() /* 1 */
   .use('img')
     .loader('img-loader')
-    .end()
+  .end()
   .use('externalSvgSprite')
     .loader(svgSpriteLoader)
     .options({
       name: 'sprite.[hash].bundle.svg'
-    });
+    })
+  .end();
+
+
+  /**
+   * Webpack Plugins
+   */
 
   neutrino.config.plugins
   // .delete('html')
   .delete('copy');
 
   neutrino.config
-  .plugin('svgStore')
+  .plugin('svgSprite')
     .use(SvgSpritePlugin)
-    .end()
+  .end()
   .plugin('manifest')
     .use(ManifestPlugin)
-    .end();
+  .end()
+  .plugin('extract')
+    .tap(args => {
+      return [{
+        filename: '[name].[chunkhash].bundle.css',
+        allChunks: true,
+        ignoreOrder:  true,
+      }]
+    })
+  .end();
 };
