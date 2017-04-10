@@ -1,3 +1,6 @@
+const path = require('path');
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 const web = require('neutrino-preset-web');
 const stylelint = require('neutrino-middleware-stylelint');
 const eslint = require('neutrino-middleware-eslint');
@@ -6,9 +9,6 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
-const path = require('path');
-const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = process.env.NODE_ENV === 'development';
 
 module.exports = (neutrino) => {
   const postcssConfig = {
@@ -23,7 +23,6 @@ module.exports = (neutrino) => {
     ]
   };
 
-  // https://github.com/haydenbleasel/favicons#usage
   const faviconConfig = {
     logo: path.resolve(neutrino.options.source, 'img/logo.svg'),
     prefix: 'favicons.[hash]/',
@@ -80,7 +79,7 @@ module.exports = (neutrino) => {
   .use('externalSvgSprite')
     .loader(require.resolve('external-svg-sprite-loader'))
     .options({
-      name: 'sprite.[hash].bundle.svg'
+      name: 'sprites.[hash].svg'
     })
     .end();
 
@@ -103,11 +102,16 @@ module.exports = (neutrino) => {
     .end();
 
   /**
-   * Alias
+   * Resolve
    */
 
-  neutrino.config.resolve.alias
-  .set('modernizr$', path.resolve(neutrino.options.root, '.modernizr-autorc'))
+  neutrino.config.resolve
+  .alias
+    .set('modernizr$', path.resolve(neutrino.options.root, '.modernizr-autorc'))
+    .end()
+  .modules
+    .add(neutrino.options.source)
+    .add(path.join(neutrino.options.source, 'js'));
 
   /**
    * Webpack Plugins
@@ -132,11 +136,10 @@ module.exports = (neutrino) => {
   .plugin('extract')
     .tap(args => {
       return [{
-        filename: '[name].[chunkhash].bundle.css',
+        filename: '[name].[chunkhash].css',
         allChunks: true,
         ignoreOrder:  true,
       }]
     })
-    .end()
-  ;
+    .end();
 };

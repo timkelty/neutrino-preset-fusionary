@@ -1,0 +1,12 @@
+- [x] Imagemin all the things
+- [x] JS: Min/Uglify/Babili
+- [ ] CSS: Minify/Nano
+- [x] DevServer/HMR
+- [x] Auto Modernizr/Customizr
+- [ ] Nunjucks
+- [x] Favicons
+- [ ] Self-linting (config)
+- [ ] Browsersync
+- [x] babel-polyfill
+- [ ] dotenv webpack
+- [x] default paths (app/assets/js, etc)

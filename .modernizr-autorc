@@ -1,0 +1,4 @@
+{
+  "runOnce": true,
+  "app/assets/**/*.{js,css}"
+}
