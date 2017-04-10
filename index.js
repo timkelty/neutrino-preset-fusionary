@@ -50,31 +50,39 @@ module.exports = (neutrino) => {
    * 1. https://github.com/karify/external-svg-sprite-loader/issues/18
    */
 
-  neutrino.config.module
-  .rule('modernizr')
+   neutrino.config.module.rule('modernizr')
   .test(/\.modernizr-autorc$/)
   .use('modernizr')
-  .loader('modernizr-auto-loader')
-  .end();
+    .loader('modernizr-auto-loader')
+    .end();
 
-  neutrino.config.module
-  .rule('img')
+  neutrino.config.module.rule('img')
   .use('img')
-  .loader('img-loader')
-  .end();
+    .loader('img-loader')
+    .end();
 
-  neutrino.config.module
-  .rule('svg')
+  neutrino.config.module.rule('svg')
   .uses.delete('url').end() /* 1 */
   .use('img')
     .loader('img-loader')
-  .end()
+    .end()
   .use('externalSvgSprite')
     .loader(require.resolve('external-svg-sprite-loader'))
     .options({
       name: 'sprite.[hash].bundle.svg'
     })
-  .end();
+    .end();
+
+  neutrino.config.module.rule('jquery')
+  .test(require.resolve('jquery'))
+  .use('jQuery')
+    .loader('expose-loader')
+    .options('jQuery')
+    .end()
+  .use('$')
+    .loader('expose-loader')
+    .options('$')
+    .end();
 
   /**
    * Alias
@@ -87,11 +95,11 @@ module.exports = (neutrino) => {
    * Webpack Plugins
    */
 
-  neutrino.config.plugins
-  // .delete('html')
-  .delete('copy');
-
   neutrino.config
+  .plugins
+    // .delete('html')
+    .delete('copy')
+    .end()
   .plugin('svgSprite')
     .use(SvgSpritePlugin)
   .end()
