@@ -5,7 +5,10 @@ const extractStyles = require('neutrino-middleware-extractstyles');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const path = require('path');
+const isProduction = process.env.NODE_ENV === 'production';
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 module.exports = (neutrino) => {
   const postcssConfig = {
@@ -20,6 +23,14 @@ module.exports = (neutrino) => {
     ]
   };
 
+  // https://github.com/haydenbleasel/favicons#usage
+  const faviconConfig = {
+    logo: path.resolve(neutrino.options.source, 'img/logo.svg'),
+    prefix: 'favicons.[hash]/',
+    emitStats: true,
+    statsFilename: 'favicons.[hash].json',
+    persistentCache: true,
+  };
 
   /**
    * Neutrino middlewares
@@ -50,7 +61,7 @@ module.exports = (neutrino) => {
    * 1. https://github.com/karify/external-svg-sprite-loader/issues/18
    */
 
-   neutrino.config.module.rule('modernizr')
+  neutrino.config.module.rule('modernizr')
   .test(/\.modernizr-autorc$/)
   .use('modernizr')
     .loader('modernizr-auto-loader')
@@ -74,7 +85,7 @@ module.exports = (neutrino) => {
     .end();
 
   neutrino.config.module.rule('jquery')
-  .test(require.resolve('jquery'))
+  .test(/^jquery$/)
   .use('jQuery')
     .loader('expose-loader')
     .options('jQuery')
@@ -82,6 +93,13 @@ module.exports = (neutrino) => {
   .use('$')
     .loader('expose-loader')
     .options('$')
+    .end();
+
+  neutrino.config.module.rule('webfontloader')
+  .test(/^webfontloader$/)
+  .use('webfontloader')
+    .loader('expose-loader')
+    .options('WebFont')
     .end();
 
   /**
@@ -102,10 +120,15 @@ module.exports = (neutrino) => {
     .end()
   .plugin('svgSprite')
     .use(SvgSpritePlugin)
-  .end()
+    .end()
   .plugin('manifest')
     .use(ManifestPlugin)
-  .end()
+    .end()
+  .when(isProduction, (config) => {
+    config.plugin('favicons')
+      .use(FaviconsWebpackPlugin, [faviconConfig])
+      .end();
+  })
   .plugin('extract')
     .tap(args => {
       return [{
@@ -114,5 +137,6 @@ module.exports = (neutrino) => {
         ignoreOrder:  true,
       }]
     })
-  .end();
+    .end()
+  ;
 };
