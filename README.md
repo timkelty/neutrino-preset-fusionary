@@ -6,7 +6,7 @@
 - [ ] Nunjucks
 - [x] Favicons
 - [ ] Self-linting (config)
-- [ ] Browsersync
+- [ ] Browsersync (https://github.com/Va1/browser-sync-webpack-plugin)
 - [x] babel-polyfill
 - [ ] dotenv webpack
 - [x] default paths (app/assets/js, etc)
