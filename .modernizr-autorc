@@ -1,4 +1,8 @@
 {
   "runOnce": true,
-  "app/assets/**/*.{js,css}"
+  "files": {
+    "src": [
+      "app/assets/**/*.{js,jsx,css}"
+    ]
+  }
 }

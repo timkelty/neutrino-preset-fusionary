@@ -34,10 +34,13 @@ module.exports = (neutrino) => {
   /**
    * Neutrino middlewares
    * 1. https://github.com/postcss/postcss-loader#css-modules
+   * 2. WIP: https://github.com/barraponto/neutrino-preset-stylelint
    */
 
   neutrino.use(web);
-  neutrino.use(stylelint);
+  neutrino.use(stylelint, {
+    files: [path.join(neutrino.options.source +  '**/*.+css')], /* 2 */
+  });
   neutrino.use(eslint);
   neutrino.use(extractStyles, {
     use: [
@@ -56,26 +59,32 @@ module.exports = (neutrino) => {
   });
 
   /**
-   * Module
+   * config.entry
+   */
+
+  neutrino.config.entry('head')
+  .add(path.join(neutrino.options.source, 'js/head.js'));
+
+  /**
+   * config.module.rule
    * 1. https://github.com/karify/external-svg-sprite-loader/issues/18
    */
 
   neutrino.config.module.rule('modernizr')
   .test(/\.modernizr-autorc$/)
   .use('modernizr')
-    .loader('modernizr-auto-loader')
-    .end();
+    .when(isProduction, (config) => {
+      config.loader('modernizr-auto-loader');
+    }, (config) => {
+      config.loader('null-loader');
+    });
 
   neutrino.config.module.rule('img')
-  .use('img')
-    .loader('img-loader')
-    .end();
+  .when(isProduction, (config) => config.use('img').loader('img-loader'));
 
   neutrino.config.module.rule('svg')
   .uses.delete('url').end() /* 1 */
-  .use('img')
-    .loader('img-loader')
-    .end()
+  .when(isProduction, (config) => config.use('img').loader('img-loader'))
   .use('externalSvgSprite')
     .loader(require.resolve('external-svg-sprite-loader'))
     .options({
@@ -102,19 +111,19 @@ module.exports = (neutrino) => {
     .end();
 
   /**
-   * Resolve
+   * config.resolve
    */
 
   neutrino.config.resolve
   .alias
-    .set('modernizr$', path.resolve(neutrino.options.root, '.modernizr-autorc'))
+    .set('modernizr$', path.resolve(__dirname, '.modernizr-autorc'))
     .end()
   .modules
     .add(neutrino.options.source)
     .add(path.join(neutrino.options.source, 'js'));
 
   /**
-   * Webpack Plugins
+   * config.plugins
    */
 
   neutrino.config
