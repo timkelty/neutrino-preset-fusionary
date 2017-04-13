@@ -145,27 +145,27 @@ module.exports = (neutrino) => {
    * config.plugins
    */
 
-  neutrino.config.plugin('minify').tap(() => [{
-    removeConsole: true,
-    removeDebugger: true,
-  }]);
-
   neutrino.config
   .plugins
-    .delete('html')
+    // .delete('html')
     .delete('copy')
     .end()
+  .when(isProduction, (config) => {
+    config
+    .plugin('favicons')
+      .use(FaviconsWebpackPlugin, [faviconConfig])
+      .end()
+    .plugin('minify').tap(() => [{
+      removeConsole: true,
+      removeDebugger: true,
+    }]);
+  })
   .plugin('svgSprite')
     .use(SvgSpritePlugin)
     .end()
   .plugin('manifest')
     .use(ManifestPlugin)
     .end()
-  .when(isProduction, (config) => {
-    config.plugin('favicons')
-      .use(FaviconsWebpackPlugin, [faviconConfig])
-      .end();
-  })
   .plugin('extract')
     .tap(args => {
       return [{
