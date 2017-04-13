@@ -47,7 +47,7 @@ Options can be overridden in `package.json`.
   },
   "neutrino": {
     "use": [
-      "neutrino-preset-fusionary"
+      "neutrino-preset-fusionary-web"
     ],
     "options": {
       "fusionary": {
