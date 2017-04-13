@@ -1,6 +1,10 @@
 ## Features
 
-- [x] Imagemin all the things
+- [x] Server-side rendering (default, but optional)
+  - remove `html-webpack-plugin`
+  - provide a revision manifest for server template consumption
+  - pass options to `DevServer.proxy`
+- [x] Imagemin all svg/images
 - [x] JS: Min/Uglify/Babili
 - [ ] CSS: Minify/Nano
 - [x] DevServer/HMR
@@ -8,7 +12,7 @@
 - [ ] Nunjucks
 - [x] Favicons
 - [ ] Self-linting (config)
-- [ ] Browsersync (https://github.com/Va1/browser-sync-webpack-plugin)
+- [ ] Use Browsersync + DevServer (https://github.com/Va1/browser-sync-webpack-plugin)
 - [x] babel-polyfill
 - [ ] dotenv webpack
 - [x] default paths (app/assets/js, etc)
@@ -18,20 +22,17 @@
 
 ## Options
 
+* `neutrino.options.fusionary.source`: (default:`./app/assets`)
+* `neutrino.options.fusionary.output`: (default:`./public/assets`)
+* `neutrino.options.fusionary.entry`: (default:`./js/index.js`)
+* `neutrino.options.fusionary.spa`: (default:`false`)
+
 Options can be overridden in `package.json`.
 
-### `neutrino.options.fusionary` defaults:
+## Environment Variables
+* `DEV_PROXY`: When running `start`, requests will be proxied though this url.
 
-```json
-{
-  "spa": false,
-  "source": "./app/assets",
-  "output": "./public/assets",
-  "entry": "./js/index.js"
-}
-```
-
-## Example `package.json`:
+## `package.json`:
 
 ```json
 {
