@@ -10,6 +10,6 @@
 - [x] babel-polyfill
 - [ ] dotenv webpack
 - [x] default paths (app/assets/js, etc)
-- [?] source maps (for all entry points)
+- [ ] source maps (for all entry points)
 - [ ] babelrc
 - [ ] drop_console
