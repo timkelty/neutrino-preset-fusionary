@@ -1,6 +1,4 @@
 const path = require('path');
-const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = process.env.NODE_ENV === 'development';
 const web = require('neutrino-preset-web');
 const stylelint = require('neutrino-middleware-stylelint');
 const eslint = require('neutrino-middleware-eslint');
@@ -9,8 +7,12 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+require('dotenv').config();
 
 module.exports = (neutrino) => {
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   /**
    * Neutrino options
@@ -67,6 +69,13 @@ module.exports = (neutrino) => {
       },
     ],
   });
+
+  // neutrino.config.devServer.proxy({
+  //   '/': {
+  //     target: process.env.HTTP_PROXY,
+  //     changeOrigin: true,
+  //   }
+  // });
 
   /**
    * config.entry
@@ -136,17 +145,14 @@ module.exports = (neutrino) => {
    * config.plugins
    */
 
-  neutrino.config.plugin('minify')
-  .tap(() => {
-    return [{
-      removeConsole: true,
-      removeDebugger: true,
-    }]
-  });
+  neutrino.config.plugin('minify').tap(() => [{
+    removeConsole: true,
+    removeDebugger: true,
+  }]);
 
   neutrino.config
   .plugins
-    // .delete('html')
+    .delete('html')
     .delete('copy')
     .end()
   .plugin('svgSprite')
