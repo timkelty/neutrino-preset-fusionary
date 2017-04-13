@@ -47,7 +47,7 @@ module.exports = (neutrino) => {
       },
       {
         loader: 'postcss-loader',
-        options: require('./postcss.config')(neutrino.options),
+        options: require('./config/postcss')(neutrino.options),
       },
     ],
   });
@@ -134,7 +134,7 @@ module.exports = (neutrino) => {
     config
     .plugin('favicons')
       .use(FaviconsWebpackPlugin, [
-        require('./favicon.config')(neutrino.options)
+        require('./config/favicon')(neutrino.options)
       ])
       .end()
     .plugin('minify').tap(() => [{
