@@ -10,7 +10,7 @@
 - [x] Postcss
   - [x] ExtractText
   - [x] Stylelint
-  - [ ] Minify/CSS Nano
+  - [x] Minify/CSS Nano
 - [x] SVG Sprites
 - [x] Favicon generation
 - [x] DevServer/HMR

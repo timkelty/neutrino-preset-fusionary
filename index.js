@@ -7,6 +7,8 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
 const dotenv = require('dotenv').config();
 
 module.exports = (neutrino) => {
@@ -157,5 +159,8 @@ module.exports = (neutrino) => {
         ignoreOrder:  true,
       }]
     })
+    .end()
+  .plugin('optimizeCss')
+    .use(OptimizeCssAssetsPlugin)
     .end();
 };
