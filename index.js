@@ -23,18 +23,6 @@ module.exports = (neutrino) => {
   neutrino.options.output = './public/assets';
   neutrino.options.entry = './js/index.js';
 
-  const postcssConfig = {
-    plugins: [
-      require('postcss-easy-import')(),
-      require('postcss-assets')({
-        loadPaths: ['fonts/', 'img/'],
-        basePath: neutrino.options.source,
-        relative: true,
-      }),
-      require('postcss-cssnext')(),
-    ]
-  };
-
   const faviconConfig = {
     logo: path.resolve(neutrino.options.source, 'img/logo.svg'),
     prefix: 'favicons.[hash]/',
@@ -65,24 +53,32 @@ module.exports = (neutrino) => {
       },
       {
         loader: 'postcss-loader',
-        options: postcssConfig,
+        options: require('./postcss.config')(neutrino.options),
       },
     ],
   });
 
-  // neutrino.config.devServer.proxy({
-  //   '/': {
-  //     target: process.env.HTTP_PROXY,
-  //     changeOrigin: true,
-  //   }
-  // });
-
   /**
-   * config.entry
+   * config.*
    */
+
+  neutrino.config.devServer.proxy({
+    '/': {
+      target: process.env.HTTP_PROXY,
+      changeOrigin: true,
+    }
+  });
 
   neutrino.config.entry('head')
   .add(path.join(neutrino.options.source, 'js/head.js'));
+
+  neutrino.config.resolve
+  .alias
+    .set('modernizr$', path.resolve(__dirname, '.modernizr-autorc'))
+    .end()
+  .modules
+    .add(neutrino.options.source)
+    .add(path.join(neutrino.options.source, 'js'));
 
   /**
    * config.module.rule
@@ -130,19 +126,7 @@ module.exports = (neutrino) => {
     .end();
 
   /**
-   * config.resolve
-   */
-
-  neutrino.config.resolve
-  .alias
-    .set('modernizr$', path.resolve(__dirname, '.modernizr-autorc'))
-    .end()
-  .modules
-    .add(neutrino.options.source)
-    .add(path.join(neutrino.options.source, 'js'));
-
-  /**
-   * config.plugins
+   * config.plugin(s)
    */
 
   neutrino.config
