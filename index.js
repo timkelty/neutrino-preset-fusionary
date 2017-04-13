@@ -19,17 +19,11 @@ module.exports = (neutrino) => {
    * https://neutrino.js.org/customization/simple.html#overriding-neutrino-options
    */
 
-  neutrino.options.source = './app/assets';
-  neutrino.options.output = './public/assets';
-  neutrino.options.entry = './js/index.js';
-
-  const faviconConfig = {
-    logo: path.resolve(neutrino.options.source, 'img/logo.svg'),
-    prefix: 'favicons.[hash]/',
-    emitStats: true,
-    statsFilename: 'favicons.[hash].json',
-    persistentCache: true,
-  };
+  Object.assign(neutrino.options, {
+    source: './app/assets',
+    output: './public/assets',
+    entry: './js/index.js',
+  });
 
   /**
    * Neutrino middlewares
@@ -62,11 +56,13 @@ module.exports = (neutrino) => {
    * config.*
    */
 
-  neutrino.config.devServer.proxy({
-    '/': {
-      target: process.env.HTTP_PROXY,
-      changeOrigin: true,
-    }
+  neutrino.config.when(isDevelopment && process.env.HTTP_PROXY, (config) => {
+    config.devServer.proxy({
+      '/': {
+        target: process.env.HTTP_PROXY,
+        changeOrigin: true,
+      }
+    });
   });
 
   neutrino.config.entry('head')
@@ -131,13 +127,15 @@ module.exports = (neutrino) => {
 
   neutrino.config
   .plugins
-    // .delete('html')
+    .delete('html')
     .delete('copy')
     .end()
   .when(isProduction, (config) => {
     config
     .plugin('favicons')
-      .use(FaviconsWebpackPlugin, [faviconConfig])
+      .use(FaviconsWebpackPlugin, [
+        require('./favicon.config')(neutrino.options)
+      ])
       .end()
     .plugin('minify').tap(() => [{
       removeConsole: true,
