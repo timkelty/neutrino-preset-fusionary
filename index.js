@@ -7,12 +7,13 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
-require('dotenv').config();
+const dotenv = require('dotenv').config();
 
 module.exports = (neutrino) => {
 
   const isProduction = process.env.NODE_ENV === 'production';
   const isDevelopment = process.env.NODE_ENV === 'development';
+  const devProxy = process.env.DEV_PROXY;
 
   /**
    * Neutrino options
@@ -56,10 +57,10 @@ module.exports = (neutrino) => {
    * config.*
    */
 
-  neutrino.config.when(isDevelopment && process.env.HTTP_PROXY, (config) => {
+  neutrino.config.when(isDevelopment && devProxy, (config) => {
     config.devServer.proxy({
       '/': {
-        target: process.env.HTTP_PROXY,
+        target: devProxy,
         changeOrigin: true,
       }
     });
