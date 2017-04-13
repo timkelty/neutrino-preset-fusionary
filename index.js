@@ -11,6 +11,16 @@ const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 module.exports = (neutrino) => {
+
+  /**
+   * Neutrino options
+   * https://neutrino.js.org/customization/simple.html#overriding-neutrino-options
+   */
+
+  neutrino.options.source = './app/assets';
+  neutrino.options.output = './public/assets';
+  neutrino.options.entry = './js/index.js';
+
   const postcssConfig = {
     plugins: [
       require('postcss-easy-import')(),
@@ -125,6 +135,14 @@ module.exports = (neutrino) => {
   /**
    * config.plugins
    */
+
+  neutrino.config.plugin('minify')
+  .tap(() => {
+    return [{
+      removeConsole: true,
+      removeDebugger: true,
+    }]
+  });
 
   neutrino.config
   .plugins
