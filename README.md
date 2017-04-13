@@ -1,18 +1,24 @@
 ## Features
 
 - [x] Server-side rendering (default, but optional)
-  - remove `html-webpack-plugin`
-  - provide a revision manifest for server template consumption
-  - pass options to `DevServer.proxy`
+  - [x] remove `html-webpack-plugin`
+  - [x] provide a revision manifest for server template consumption
+  - [x] pass options to `DevServer.proxy`
 - [x] Imagemin all svg/images
 - [x] JS: Min/Uglify/Babili
-- [ ] CSS: Minify/Nano
+- [x] eslint
+- [x] Postcss
+  - [x] ExtractText
+  - [x] Stylelint
+  - [ ] Minify/CSS Nano
+- [x] SVG Sprites
+- [x] Favicon generation
 - [x] DevServer/HMR
 - [x] Auto Modernizr/Customizr
 - [ ] Nunjucks
 - [x] Favicons
-- [ ] Self-linting (config)
-- [ ] Use Browsersync + DevServer (https://github.com/Va1/browser-sync-webpack-plugin)
+- [ ] Lint config (not just source)
+- [ ] Browsersync + DevServer (https://github.com/Va1/browser-sync-webpack-plugin)
 - [x] babel-polyfill
 - [ ] dotenv webpack
 - [x] default paths (app/assets/js, etc)
