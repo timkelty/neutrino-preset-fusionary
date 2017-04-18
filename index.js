@@ -19,9 +19,6 @@ module.exports = (neutrino) => {
   const customOptions = neutrino.options.fusionary || {};
   const setPathDefaults = defaultTo(true, customOptions.setPathDefaults);
   const spa = defaultTo(false, customOptions.spa);
-  const entryPoints = defaultTo({
-    'head': './js/head.js',
-  }, customOptions.entryPoints);
 
   /**
    * Neutrino options
@@ -76,10 +73,8 @@ module.exports = (neutrino) => {
     });
   });
 
-  Object.keys(entryPoints).forEach(function(key) {
-    neutrino.config.entry(key)
-    .add(path.join(neutrino.options.source, entryPoints[key]));
-  });
+  neutrino.config.entry('head')
+  .add(path.join(neutrino.options.source, 'js/head.js'));
 
   neutrino.config.resolve
   .alias
