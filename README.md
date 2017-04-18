@@ -28,10 +28,9 @@
 
 ## Options
 
-* `neutrino.options.fusionary.source`: (default:`./app/assets`)
-* `neutrino.options.fusionary.output`: (default:`./public/assets`)
-* `neutrino.options.fusionary.entry`: (default:`./js/index.js`)
+* `neutrino.options.fusionary.setPathDefaults`: (default:`true`)
 * `neutrino.options.fusionary.spa`: (default:`false`)
+* `neutrino.options.fusionary.entryPoints`: (default:`{head: './js/head.js'}`)
 
 Options can be overridden in `package.json`.
 
@@ -56,9 +55,13 @@ Options can be overridden in `package.json`.
       "neutrino-preset-fusionary-web"
     ],
     "options": {
+      "source": "./app/foo",
+      "output": "./public/foo",
       "fusionary": {
-        "source": "./app/foo",
-        "output": "./public/foo"
+        "setPathDefaults": false,
+        "entryPoints": {
+          "myEntry": "./js/my-entry.js"
+        }
       }
     },
   }

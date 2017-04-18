@@ -8,25 +8,33 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-
 const dotenv = require('dotenv').config();
+const { defaultTo } = require('ramda');
 
 module.exports = (neutrino) => {
 
   const isProduction = process.env.NODE_ENV === 'production';
   const isDevelopment = process.env.NODE_ENV === 'development';
   const devProxy = process.env.DEV_PROXY;
+  const customOptions = neutrino.options.fusionary || {};
+  const setPathDefaults = defaultTo(true, customOptions.setPathDefaults);
+  const spa = defaultTo(false, customOptions.spa);
+  const entryPoints = defaultTo({
+    'head': './js/head.js',
+  }, customOptions.entryPoints);
 
   /**
    * Neutrino options
    * https://neutrino.js.org/customization/simple.html#overriding-neutrino-options
    */
 
-  Object.assign(neutrino.options, {
-    source: './app/assets',
-    output: './public/assets',
-    entry: './js/index.js',
-  });
+  if (setPathDefaults) {
+    Object.assign(neutrino.options, {
+      source: './app/assets',
+      output: './public/assets',
+      entry: './js/index.js',
+    });
+  }
 
   /**
    * Neutrino middlewares
@@ -68,8 +76,10 @@ module.exports = (neutrino) => {
     });
   });
 
-  neutrino.config.entry('head')
-  .add(path.join(neutrino.options.source, 'js/head.js'));
+  Object.keys(entryPoints).forEach(function(key) {
+    neutrino.config.entry(key)
+    .add(path.join(neutrino.options.source, entryPoints[key]));
+  });
 
   neutrino.config.resolve
   .alias
@@ -130,7 +140,9 @@ module.exports = (neutrino) => {
 
   neutrino.config
   .plugins
-    .delete('html')
+    .when(!spa, (config) => {
+      config.delete('html');
+    })
     .delete('copy')
     .end()
   .when(isProduction, (config) => {
@@ -140,10 +152,15 @@ module.exports = (neutrino) => {
         require('./config/favicon')(neutrino.options)
       ])
       .end()
-    .plugin('minify').tap(() => [{
-      removeConsole: true,
-      removeDebugger: true,
-    }]);
+    .plugin('minify')
+      .tap(() => [{
+        removeConsole: true,
+        removeDebugger: true,
+      }])
+      .end()
+    .plugin('optimizeCss')
+      .use(OptimizeCssAssetsPlugin)
+      .end();
   })
   .plugin('svgSprite')
     .use(SvgSpritePlugin)
@@ -152,15 +169,10 @@ module.exports = (neutrino) => {
     .use(ManifestPlugin)
     .end()
   .plugin('extract')
-    .tap(args => {
-      return [{
-        filename: '[name].[chunkhash].css',
-        allChunks: true,
-        ignoreOrder:  true,
-      }]
-    })
-    .end()
-  .plugin('optimizeCss')
-    .use(OptimizeCssAssetsPlugin)
+    .tap(args => [{
+      filename: '[name].[chunkhash].css',
+      allChunks: true,
+      ignoreOrder:  true,
+    }])
     .end();
 };
