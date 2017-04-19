@@ -4,7 +4,6 @@ const stylelint = require('neutrino-middleware-stylelint');
 const eslint = require('neutrino-middleware-eslint');
 const extractStyles = require('neutrino-middleware-extractstyles');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -44,14 +43,14 @@ module.exports = (neutrino) => {
   neutrino.use(extractStyles, {
     use: [
       {
-        loader: 'css-loader',
+        loader: require.resolve('css-loader'),
         options: {
           sourceMap: true,
           importLoaders: 1, /* 1 */
         }
       },
       {
-        loader: 'postcss-loader',
+        loader: require.resolve('postcss-loader'),
         options: require('./config/postcss')(neutrino.options),
       },
     ],
@@ -90,17 +89,17 @@ module.exports = (neutrino) => {
   .test(/\.modernizr-autorc$/)
   .use('modernizr')
     .when(isProduction, (config) => {
-      config.loader('modernizr-auto-loader');
+      config.loader(require.resolve('modernizr-auto-loader'));
     }, (config) => {
-      config.loader('null-loader');
+      config.loader(require.resolve('null-loader'));
     });
 
   neutrino.config.module.rule('img')
-  .when(isProduction, (config) => config.use('img').loader('img-loader'));
+  .when(isProduction, (config) => config.use('img').loader(require.resolve('img-loader')));
 
   neutrino.config.module.rule('svg')
   .uses.delete('url').end() /* 1 */
-  .when(isProduction, (config) => config.use('img').loader('img-loader'))
+  .when(isProduction, (config) => config.use('img').loader(require.resolve('img-loader')))
   .use('externalSvgSprite')
     .loader(require.resolve('external-svg-sprite-loader'))
     .options({
@@ -111,18 +110,18 @@ module.exports = (neutrino) => {
   neutrino.config.module.rule('jquery')
   .test(/^jquery$/)
   .use('jQuery')
-    .loader('expose-loader')
+    .loader(require.resolve('expose-loader'))
     .options('jQuery')
     .end()
   .use('$')
-    .loader('expose-loader')
+    .loader(require.resolve('expose-loader'))
     .options('$')
     .end();
 
   neutrino.config.module.rule('webfontloader')
   .test(/^webfontloader$/)
   .use('webfontloader')
-    .loader('expose-loader')
+    .loader(require.resolve('expose-loader'))
     .options('WebFont')
     .end();
 
