@@ -16,9 +16,9 @@ module.exports = (neutrino) => {
   const isProduction = process.env.NODE_ENV === 'production';
   const isDevelopment = process.env.NODE_ENV === 'development';
   const devProxy = process.env.DEV_PROXY;
-  const customOptions = neutrino.options.fusionary || {};
-  const setPathDefaults = defaultTo(true, customOptions.setPathDefaults);
-  const spa = defaultTo(false, customOptions.spa);
+  const middlewareOptions = neutrino.options.fusionary || {};
+  const setPathDefaults = defaultTo(true, middlewareOptions.setPathDefaults);
+  const spa = defaultTo(false, middlewareOptions.spa);
 
   /**
    * Neutrino options
@@ -36,13 +36,10 @@ module.exports = (neutrino) => {
   /**
    * Neutrino middlewares
    * 1. https://github.com/postcss/postcss-loader#css-modules
-   * 2. WIP: https://github.com/barraponto/neutrino-preset-stylelint
    */
 
   neutrino.use(web);
-  neutrino.use(stylelint, {
-    files: [path.join(neutrino.options.source +  '**/*.+css')], /* 2 */
-  });
+  neutrino.use(stylelint);
   neutrino.use(eslint);
   neutrino.use(extractStyles, {
     use: [
