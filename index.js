@@ -41,19 +41,26 @@ module.exports = (neutrino) => {
   neutrino.use(stylelint);
   neutrino.use(eslint);
   neutrino.use(extractStyles, {
-    use: [
-      {
-        loader: require.resolve('css-loader'),
-        options: {
-          sourceMap: true,
-          importLoaders: 1, /* 1 */
-        }
-      },
-      {
-        loader: require.resolve('postcss-loader'),
-        options: require('./config/postcss')(neutrino.options),
-      },
-    ],
+    loaderOptions: {
+      use: [
+        {
+          loader: require.resolve('css-loader'),
+          options: {
+            sourceMap: true,
+            importLoaders: 1, /* 1 */
+          }
+        },
+        {
+          loader: require.resolve('postcss-loader'),
+          options: require('./config/postcss')(neutrino.options),
+        },
+      ],
+    },
+    pluginOptions: {
+      filename: `[name]${isProduction ? '.[chunkhash]' : ''}.css`,
+      allChunks: true,
+      ignoreOrder: true,
+    }
   });
 
   /**
@@ -103,7 +110,7 @@ module.exports = (neutrino) => {
   .use('externalSvgSprite')
     .loader(require.resolve('external-svg-sprite-loader'))
     .options({
-      name: 'sprites.[hash].svg'
+      name: `sprites${isProduction ? '.[hash]' : ''}.svg`
     })
     .end();
 
@@ -158,12 +165,5 @@ module.exports = (neutrino) => {
     .end()
   .plugin('manifest')
     .use(ManifestPlugin)
-    .end()
-  .plugin('extract')
-    .tap(args => [{
-      filename: '[name].[chunkhash].css',
-      allChunks: true,
-      ignoreOrder:  true,
-    }])
     .end();
 };
