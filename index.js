@@ -76,8 +76,10 @@ module.exports = (neutrino) => {
     });
   });
 
-  neutrino.config.entry('head')
-  .add(path.join(neutrino.options.source, 'js/head.js'));
+  if (!spa) {
+    neutrino.config.entry('head')
+    .add(path.join(neutrino.options.source, 'js/head.js'));
+  }
 
   neutrino.config.resolve
   .alias
