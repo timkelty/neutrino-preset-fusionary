@@ -8,16 +8,15 @@ const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const dotenv = require('dotenv').config();
-const {defaultTo} = require('ramda');
 
-module.exports = (neutrino) => {
+module.exports = (neutrino, {
+  spa = false,
+  setPathDefaults = true,
+  devProxy = process.env.DEV_PROXY
+}) => {
 
   const isProduction = process.env.NODE_ENV === 'production';
   const isDevelopment = process.env.NODE_ENV === 'development';
-  const devProxy = process.env.DEV_PROXY;
-  const middlewareOptions = neutrino.options.fusionary || {};
-  const setPathDefaults = defaultTo(true, middlewareOptions.setPathDefaults);
-  const spa = defaultTo(false, middlewareOptions.spa);
 
   /**
    * Neutrino options
