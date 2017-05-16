@@ -5,7 +5,7 @@ module.exports = function(options) {
     logo: path.resolve(options.source, 'img/logo.svg'),
     prefix: 'favicons.[hash]/',
     emitStats: true,
-    statsFilename: 'favicons.[hash].json',
+    statsFilename: 'favicons.json',
     persistentCache: true,
   };
-}
+};
