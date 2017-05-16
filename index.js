@@ -4,7 +4,9 @@ const stylelint = require('neutrino-middleware-stylelint');
 const eslint = require('neutrino-middleware-eslint');
 const extractStyles = require('neutrino-middleware-extractstyles');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
+// const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
+const SvgSpritePlugin = require('svg-sprite-loader/plugin');
+
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const dotenv = require('dotenv').config();
@@ -108,10 +110,11 @@ module.exports = (neutrino, {
   neutrino.config.module.rule('svg')
   .uses.delete('url').end() /* 1 */
   .when(isProduction, (config) => config.use('img').loader(require.resolve('img-loader')))
-  .use('externalSvgSprite')
-    .loader(require.resolve('external-svg-sprite-loader'))
+  .use('svgSprite')
+    .loader(require.resolve('svg-sprite-loader'))
     .options({
-      name: `sprites${isProduction ? '.[hash]' : ''}.svg`
+      extract: true,
+      spriteFilename: `sprites${isProduction ? '.[hash:6]' : ''}.svg`
     })
     .end();
 

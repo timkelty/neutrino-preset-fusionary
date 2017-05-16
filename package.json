@@ -26,6 +26,7 @@
     "postcss-easy-import": "^2.0.0",
     "ramda": "^0.23.0",
     "stylelint-config-suitcss": "^11.0.0",
+    "svg-sprite-loader": "^2.1.0",
     "webpack-manifest-plugin": "^1.1.0"
   },
   "peerDependencies": {
