@@ -5,31 +5,19 @@ const eslint = require('neutrino-middleware-eslint');
 const extractStyles = require('neutrino-middleware-extractstyles');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const SvgSpritePlugin = require('external-svg-sprite-loader/lib/SvgStorePlugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const dotenv = require('dotenv').config();
 
 module.exports = (neutrino, {
-  spa = false,
-  setPathDefaults = true,
-  devProxy = process.env.DEV_PROXY
+  htmlPlugin = false,
+  devProxy = process.env.DEV_PROXY,
+  cleanOnStart = true,
+  jsDir = 'js',
+  addHeadEntry = true
 } = {}) => {
 
   const isProduction = process.env.NODE_ENV === 'production';
   const isDevelopment = process.env.NODE_ENV === 'development';
-
-  /**
-   * Neutrino options
-   * https://neutrino.js.org/customization/simple.html#overriding-neutrino-options
-   */
-
-  if (setPathDefaults) {
-    Object.assign(neutrino.options, {
-      source: './app/assets',
-      output: './public/assets',
-      entry: './js/index.js',
-    });
-  }
 
   /**
    * Neutrino middlewares
@@ -62,23 +50,32 @@ module.exports = (neutrino, {
     }
   });
 
+  if (cleanOnstart) {
+    neutrino.on('prestart', () => {
+      neutrino.use('neutrino-middleware-clean', {paths: [neutrino.options.output]});
+    });
+  }
+
   /**
    * config.*
    */
 
-  neutrino.config.when(isDevelopment && devProxy, (config) => {
+  neutrino.config
+  .when(isDevelopment && devProxy, (config) => {
     config.devServer.proxy({
-      '/': {
+      '**': {
         target: devProxy,
         changeOrigin: true,
       }
     });
+  })
+  .when(publicPath, (config) => {
+    config.output.set('publicPath', publicPath);
+  })
+  .when(addHeadEntry, (config) => {
+    config.entry('head')
+    .add(path.join(neutrino.options.source, jsDir, 'head.js'));
   });
-
-  if (!spa) {
-    neutrino.config.entry('head')
-    .add(path.join(neutrino.options.source, 'js/head.js'));
-  }
 
   neutrino.config.resolve
   .alias
@@ -86,7 +83,7 @@ module.exports = (neutrino, {
     .end()
   .modules
     .add(neutrino.options.source)
-    .add(path.join(neutrino.options.source, 'js'));
+    .add(path.join(neutrino.options.source, jsDir));
 
   /**
    * config.module.rule
@@ -139,18 +136,11 @@ module.exports = (neutrino, {
 
   neutrino.config
   .plugins
-    .when(!spa, (config) => {
+    .when(!htmlPlugin, (config) => {
       config.delete('html');
     })
-    .delete('copy')
     .end()
   .when(isProduction, (config) => {
-    config
-    .plugin('favicons')
-      .use(FaviconsWebpackPlugin, [
-        require('./config/favicon')(neutrino.options)
-      ])
-      .end()
     .plugin('minify')
       .tap(() => [{
         removeConsole: true,
